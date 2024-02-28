@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-VRM4UCapture.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"E:\MyProject\BA_Rougelike\Intermediate\Build\Win64\x64\BA_RougelikeEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.InclOrderUnreal5_0.h.obj"
+"E:\MyProject\BA_Rougelike\Plugins\VRM4U\Intermediate\Build\Win64\x64\UnrealEditor\Development\VRM4UCapture\Module.VRM4UCapture.cpp.obj"
+"E:\MyProject\BA_Rougelike\Plugins\VRM4U\Intermediate\Build\Win64\x64\UnrealEditor\Development\VRM4UCapture\Default.rc2.res"
+/OUT:"E:\MyProject\BA_Rougelike\Plugins\VRM4U\Intermediate\Build\Win64\x64\UnrealEditor\Development\VRM4UCapture\UnrealEditor-VRM4UCapture.lib"
