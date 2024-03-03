@@ -7,9 +7,9 @@
 
 //从对象池中生成Actor 调用函数模板 动态转换类型meta=(DeterminesOutputType="PoolClass", DynamicOutputParam="SpawnedActor")
 void UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation,
-                                   AActor*& SpawnedActor)
+                                   AActor* Owner, AActor*& SpawnedActor)
 {
-	SpawnedActor = SpawnFromPool<AActor>(PoolClass, Location, Rotation);
+	SpawnedActor = SpawnFromPool<AActor>(PoolClass, Location, Rotation, Owner);
 }
 
 //将Actor返回到对象池中
@@ -28,11 +28,13 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		PooledActor->SetActorLocation(FVector(RandomX, RandomY, -1000.0f));
 		//2-隐藏
 		PooledActor->SetActorHiddenInGame(true);
+		//3-清除Owner
+		PooledActor->SetOwner(nullptr);
 		//获取对应的对象池列表
 		FPoolArray* ObjectPool = ObjectPools.Find(PoolableClass);
 		//添加到对象池列表
 		ObjectPool->Push(PooledActor);
-		UE_LOG(LogTemp, Warning, TEXT("回到对象池 ObjectPool长度=%d"), ObjectPool->PoolActors.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("回到对象池 ObjectPool长度=%d"), ObjectPool->PoolActors.Num());
 	}
 	else
 	{
