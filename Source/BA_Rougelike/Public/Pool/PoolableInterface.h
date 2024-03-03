@@ -22,4 +22,14 @@ class BA_ROUGELIKE_API IPoolableInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	//回调函数-从对象池生成时
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Poolable")
+	void OnSpawnFromPool();
+
+	//回调函数-返回对象池时
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Poolable")
+	void OnReturnToPool();
+
+	
 };
