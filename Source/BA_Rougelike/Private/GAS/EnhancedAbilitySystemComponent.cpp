@@ -50,9 +50,8 @@ void UEnhancedInputAbilitySystem::BeginPlay()
  */
 FGameplayAbilitySpec* UEnhancedInputAbilitySystem::FindAbilitySpec(FGameplayAbilitySpecHandle Handle)
 {
-	// 根据句柄查找能力实例
 	FGameplayAbilitySpec* FoundAbility = nullptr;
-	// 父类函数
+	// 根据句柄查找能力实例
 	FoundAbility = FindAbilitySpecFromHandle(Handle);
 	return FoundAbility;
 }
@@ -69,9 +68,8 @@ void UEnhancedInputAbilitySystem::RemoveEntry(UInputAction* InputAction)
 		// 若增强输入组件有效
 		if (InputComponent)
 		{
-			// 移除按下的绑定
+			// 通过输入操作句柄移除输入绑定
 			InputComponent->RemoveBindingByHandle(AbilityInputBinding->OnPressedHandle);
-			// 移除释放的绑定
 			InputComponent->RemoveBindingByHandle(AbilityInputBinding->OnReleasedHandle);
 		}
 		// 遍历能力句柄列表
@@ -103,7 +101,7 @@ void UEnhancedInputAbilitySystem::OnAbilityInputPressed(UInputAction* InputActio
 	FAbilityInputBinding* AbilityInputBinding = MappedAbilities.Find(InputAction);
 	if (AbilityInputBinding && ensure(AbilityInputBinding->InputID != InvalidInputID))
 	{
-		// 核心-若传入的能力绑定信息存在且其InputID不等于0 那么调用父类的AbilityLocalInputPressed方法
+		// 核心-若传入的能力绑定信息存在且其InputID不等于0 那么调用父类的AbilityLocalInputPressed方法  传入InputID查找对应能力实例并激活
 		AbilityLocalInputPressed(AbilityInputBinding->InputID);
 	}
 }
@@ -119,7 +117,7 @@ void UEnhancedInputAbilitySystem::OnAbilityInputReleased(UInputAction* InputActi
 	FAbilityInputBinding* AbilityInputBinding = MappedAbilities.Find(InputAction);
 	if (AbilityInputBinding && ensure(AbilityInputBinding->InputID != InvalidInputID))
 	{
-		// 核心-若传入的能力绑定信息存在且其InputID不等于0 那么调用父类的AbilityLocalInputReleased方法
+		// 核心-若传入的能力绑定信息存在且其InputID不等于0 那么调用父类的AbilityLocalInputReleased方法 传入InputID查找对应能力实例并激活
 		AbilityLocalInputReleased(AbilityInputBinding->InputID);
 	}
 }
@@ -229,7 +227,7 @@ void UEnhancedInputAbilitySystem::ClearInputBinding(FGameplayAbilitySpecHandle A
 				//剩下的能力句柄列表数量大于0
 				if (AbilityInputBinding.BoundAbilitiesStack.Num() > 0)
 				{
-					//获取最后绑定的能力并尝试将其 InputID 设置为 能力绑定信息 的 InputID
+					//获取最后绑定的能力并尝试将其InputID设置为能力绑定信息的InputID
 					FGameplayAbilitySpec* StackedAbility = FindAbilitySpec(
 						AbilityInputBinding.BoundAbilitiesStack.Top());
 					if (StackedAbility && StackedAbility->InputID == 0)
