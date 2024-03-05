@@ -70,7 +70,6 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 	if (PoolClass.Get()->ImplementsInterface(UPoolableInterface::StaticClass()))
 	{
 		FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
-
 		//对象池列表是否为空
 		if (ObjectPool.IsEmpty())
 		{
