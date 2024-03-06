@@ -109,4 +109,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData SkillCooldownReduction;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, SkillCooldownReduction);
+
+	//AttributeSet自带回调---在Attribute的Current Value被改变时调用
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	//AttributeSet自带回调---在Attribute的Base Value被改变时调用
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 };
