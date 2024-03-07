@@ -199,4 +199,20 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FSkillCooldownReductionChanged SkillCooldownReductionChangedEvent;
+
+	//属性改变回调---当前弹匣容量
+	void OnMagazineSizeChanged(const FOnAttributeChangeData& Data);
+	//委托-属性变化时进行广播---当前弹匣容量
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMagazineSizeChanged, float, NewValue);
+
+	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
+	FMagazineSizeChanged MagazineSizeChangedEvent;
+
+	//属性改变回调---最大弹匣容量
+	void OnMaxMagazineSizeChanged(const FOnAttributeChangeData& Data);
+	//委托-属性变化时进行广播---最大弹匣容量
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMaxMagazineSizeChanged, float, NewValue);
+
+	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
+	FMaxMagazineSizeChanged MaxMagazineSizeChangedEvent;
 };

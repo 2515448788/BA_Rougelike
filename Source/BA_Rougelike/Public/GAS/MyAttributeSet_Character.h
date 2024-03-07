@@ -109,6 +109,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData SkillCooldownReduction;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, SkillCooldownReduction);
+	//当前弹匣容量
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FGameplayAttributeData MagazineSize;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MagazineSize);
+	//最大弹匣容量
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FGameplayAttributeData MaxMagazineSize;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MaxMagazineSize);
 
 	//AttributeSet自带回调---在Attribute的Current Value被改变时调用
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

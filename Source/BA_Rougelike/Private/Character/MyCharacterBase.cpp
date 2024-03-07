@@ -108,6 +108,14 @@ void AMyCharacterBase::BeginPlay()
 		FOnGameplayAttributeValueChange& SkillCooldownReductionChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetSkillCooldownReductionAttribute());
 		SkillCooldownReductionChangeDelegate.AddUObject(this, &AMyCharacterBase::OnSkillCooldownReductionChanged);
+		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---当前弹匣容量
+		FOnGameplayAttributeValueChange& MagazineSizeChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMagazineSizeAttribute());
+		MagazineSizeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMagazineSizeChanged);
+		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---最大弹匣容量
+		FOnGameplayAttributeValueChange& MaxMagazineSizeChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMaxMagazineSizeAttribute());
+		MaxMagazineSizeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMaxMagazineSizeChanged);
 	}
 }
 
@@ -247,4 +255,16 @@ void AMyCharacterBase::OnProjectileBounceCountChanged(const FOnAttributeChangeDa
 void AMyCharacterBase::OnSkillCooldownReductionChanged(const FOnAttributeChangeData& Data)
 {
 	SkillCooldownReductionChangedEvent.Broadcast(Data.NewValue);
+}
+
+//回调定义 属性变化时广播对应委托 --- 当前弹匣容量
+void AMyCharacterBase::OnMagazineSizeChanged(const FOnAttributeChangeData& Data)
+{
+	MagazineSizeChangedEvent.Broadcast(Data.NewValue);
+}
+
+//回调定义 属性变化时广播对应委托 --- 最大弹匣容量
+void AMyCharacterBase::OnMaxMagazineSizeChanged(const FOnAttributeChangeData& Data)
+{
+	MaxMagazineSizeChangedEvent.Broadcast(Data.NewValue);
 }

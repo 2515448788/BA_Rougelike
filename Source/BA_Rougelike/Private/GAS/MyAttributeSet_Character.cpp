@@ -27,6 +27,11 @@ void UMyAttributeSet_Character::PreAttributeChange(const FGameplayAttribute& Att
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxDodgeChance());
 	}
+	//钳制 弹匣容量 属性的CurrentValue
+	if (Attribute == GetMagazineSizeAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMagazineSize());
+	}
 }
 
 //AttributeSet自带回调---在Attribute的 BaseValue 被改变时调用
@@ -52,5 +57,10 @@ void UMyAttributeSet_Character::PostGameplayEffectExecute(const FGameplayEffectM
 	if (Data.EvaluatedData.Attribute == GetDodgeChanceAttribute())
 	{
 		SetDodgeChance(FMath::Clamp(GetDodgeChance(), 0.0f, GetMaxDodgeChance()));
+	}
+	//钳制 弹匣容量 属性的BaseValue
+	if (Data.EvaluatedData.Attribute == GetMagazineSizeAttribute())
+	{
+		SetMagazineSize(FMath::Clamp(GetMagazineSize(), 0.0f, GetMaxMagazineSize()));
 	}
 }
