@@ -117,6 +117,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData MaxMagazineSize;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MaxMagazineSize);
+	//移动速度
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FGameplayAttributeData MoveSpeed;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MoveSpeed);
 
 	//AttributeSet自带回调---在Attribute的Current Value被改变时调用
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

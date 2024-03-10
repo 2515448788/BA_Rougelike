@@ -116,6 +116,10 @@ void AMyCharacterBase::BeginPlay()
 		FOnGameplayAttributeValueChange& MaxMagazineSizeChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMaxMagazineSizeAttribute());
 		MaxMagazineSizeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMaxMagazineSizeChanged);
+		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---移动速度
+		FOnGameplayAttributeValueChange& MoveSpeedChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMoveSpeedAttribute());
+		MoveSpeedChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMoveSpeedChanged);
 	}
 }
 
@@ -267,4 +271,10 @@ void AMyCharacterBase::OnMagazineSizeChanged(const FOnAttributeChangeData& Data)
 void AMyCharacterBase::OnMaxMagazineSizeChanged(const FOnAttributeChangeData& Data)
 {
 	MaxMagazineSizeChangedEvent.Broadcast(Data.NewValue);
+}
+
+//回调定义 属性变化时广播对应委托 --- 移动速度
+void AMyCharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& Data)
+{
+	MoveSpeedChangedEvent.Broadcast(Data.NewValue);
 }

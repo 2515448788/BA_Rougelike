@@ -215,4 +215,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMaxMagazineSizeChanged MaxMagazineSizeChangedEvent;
+
+	//属性改变回调---移动速度
+	void OnMoveSpeedChanged(const FOnAttributeChangeData& Data);
+	//委托-属性变化时进行广播---移动速度
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMoveSpeedChanged, float, NewValue);
+
+	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
+	FMoveSpeedChanged MoveSpeedChangedEvent;
 };
