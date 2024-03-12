@@ -87,11 +87,20 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 		else
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop前 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
-			//不为空 从列表中获取一个Actor 并转换为模板所需类型
-			PooledActor = CastChecked<T>(ObjectPool.Pop());
-			//判空
-			if (PooledActor == nullptr)
+			// 检查获取的对象是否有效且可以转换为 T 类型
+			AActor* PooledObject = ObjectPool.Pop();
+			if (PooledObject == nullptr)
 			{
+				return nullptr;
+			}
+			try
+			{
+				PooledActor = CastChecked<T>(PooledObject);
+			}
+			catch (const std::bad_cast&)
+			{
+				// 使用固定的中文错误信息
+				UE_LOG(LogTemp, Error, TEXT("转换PooledObject为类型T时发生错误"));
 				return nullptr;
 			}
 			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop后 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
