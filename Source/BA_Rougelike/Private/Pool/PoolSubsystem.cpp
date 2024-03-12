@@ -39,6 +39,7 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 	else
 	{
 		//传入的对象没有对象池接口 直接销毁
+		UE_LOG(LogTemp, Warning, TEXT("传入的对象没有对象池接口 直接销毁"));
 		PooledActor->Destroy();
 	}
 }

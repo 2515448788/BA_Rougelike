@@ -89,6 +89,11 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop前 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
 			//不为空 从列表中获取一个Actor 并转换为模板所需类型
 			PooledActor = CastChecked<T>(ObjectPool.Pop());
+			//判空
+			if (PooledActor == nullptr)
+			{
+				return nullptr;
+			}
 			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop后 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
 			//*****从对象池生成时需要执行的通用操作*****//
 			//1-设置位置和旋转
