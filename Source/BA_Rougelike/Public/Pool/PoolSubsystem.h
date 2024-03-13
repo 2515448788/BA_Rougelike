@@ -46,7 +46,7 @@ public:
 	void SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation,
 	                   AActor* Owner, AActor*& SpawnedActor);
 
-	//函数模板 生成对象池对象
+	//函数模板-生成对象池对象
 	template <typename T>
 	T* SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation,
 	                 AActor* Owner);
@@ -66,57 +66,67 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 {
 	//需要返回的对象
 	T* PooledActor = nullptr;
+	// 设置Actor生成参数
+	FActorSpawnParameters SpawnParams;
+	// 设置碰撞处理方式为尝试调整位置但始终生成
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	//传入的类是否实现了对象池所需的接口
 	if (PoolClass.Get()->ImplementsInterface(UPoolableInterface::StaticClass()))
 	{
 		FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
+		FString ClassName = PoolClass->GetName(); // 获取Actor类名称
 		//对象池列表是否为空
 		if (ObjectPool.IsEmpty())
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("对象池列表为空 全新生成"));
-			//为空 生成新的Actor
-			FActorSpawnParameters SpawnParams;
-			//设置碰撞处理方式 尝试调整位置 但固定生成
-			SpawnParams.SpawnCollisionHandlingOverride =
-				ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-			//生成Actor
+			//对象池列表为空，全新生成Actor
+			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 对象池列表为空，全新生成  类名=(%s)"), *ClassName);
 			PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
-			//执行接口事件-生成时
-			IPoolableInterface::Execute_OnSpawnFromPool(PooledActor);
 		}
 		else
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop前 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
-			// 检查获取的对象是否有效且可以转换为 T 类型
+			UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 对象池列表有效，类名=(%s) | Pop前对象池长度(%d)"), *ClassName,
+			       ObjectPool.PoolActors.Num());
+			//检查对象池栈顶元素是否有效
 			AActor* PooledObject = ObjectPool.Pop();
 			if (PooledObject == nullptr)
 			{
-				return nullptr;
+				//栈顶元素无效生成新Actor
+				UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 栈顶元素无效，重新生成 | 类名=(%s)"), *ClassName);
+				PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
 			}
-			try
+			else
 			{
-				PooledActor = CastChecked<T>(PooledObject);
+				UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | Pop后对象池长度(%d)"), *ClassName,
+				       ObjectPool.PoolActors.Num());
+				try
+				{
+					PooledActor = CastChecked<T>(PooledObject);
+					UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | 转换类型成功！"), *ClassName);
+				}
+				catch (const std::bad_cast&)
+				{
+					UE_LOG(LogTemp, Error, TEXT("PoolSubSystem: 转换PooledObject类型时发生错误 生成新Actor | 类名=(%s)"), *ClassName);
+					//生成新Actor
+					PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
+				}
 			}
-			catch (const std::bad_cast&)
-			{
-				// 使用固定的中文错误信息
-				UE_LOG(LogTemp, Error, TEXT("转换PooledObject为类型T时发生错误"));
-				return nullptr;
-			}
-			//UE_LOG(LogTemp, Warning, TEXT("对象池列表不是空的 从对象池Pop后 对象池当前长度=%d"), ObjectPool.PoolActors.Num());
+		}
+		//有效性判断
+		if (PooledActor != nullptr)
+		{
 			//*****从对象池生成时需要执行的通用操作*****//
 			//1-设置位置和旋转
 			PooledActor->SetActorLocationAndRotation(Location, Rotation);
 			//2-显示出来
 			PooledActor->SetActorHiddenInGame(false);
+			//设置拥有者
+			if (Owner != nullptr)
+			{
+				PooledActor->SetOwner(Owner);
+			}
+			//执行接口事件-生成时
+			IPoolableInterface::Execute_OnSpawnFromPool(PooledActor);
 		}
-		//设置拥有者
-		if (Owner != nullptr)
-		{
-			PooledActor->SetOwner(Owner);
-		}
-		//执行接口事件-生成时
-		IPoolableInterface::Execute_OnSpawnFromPool(PooledActor);
 	}
 	//返回获取的Actor
 	return PooledActor;

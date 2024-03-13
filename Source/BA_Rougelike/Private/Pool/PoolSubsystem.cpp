@@ -34,12 +34,15 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		FPoolArray* ObjectPool = ObjectPools.Find(PoolableClass);
 		//添加到对象池列表
 		ObjectPool->Push(PooledActor);
-		//UE_LOG(LogTemp, Warning, TEXT("回到对象池 ObjectPool长度=%d"), ObjectPool->PoolActors.Num());
+		FString ClassName = PooledActor->GetClass()->GetName(); // 获取Actor类名称
+		UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 返回对象池 | 类名=(%s) | 返回后对象池长度=%d"), *ClassName,
+		       ObjectPool->PoolActors.Num());
 	}
 	else
 	{
 		//传入的对象没有对象池接口 直接销毁
-		UE_LOG(LogTemp, Warning, TEXT("传入的对象没有对象池接口 直接销毁"));
+		FString ClassName = PooledActor->GetClass()->GetName(); // 获取Actor类名称
+		UE_LOG(LogTemp, Error, TEXT("PoolSubSystem: 传入的对象 (%s) 没有对象池接口，直接销毁"), *ClassName);
 		PooledActor->Destroy();
 	}
 }
