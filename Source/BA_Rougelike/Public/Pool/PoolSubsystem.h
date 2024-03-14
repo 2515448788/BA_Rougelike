@@ -98,12 +98,12 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 			{
 				UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | Pop后对象池长度(%d)"), *ClassName,
 				       ObjectPool.PoolActors.Num());
-				try
+				PooledActor = Cast<T>(PooledObject);
+				if (PooledActor)
 				{
-					PooledActor = CastChecked<T>(PooledObject);
 					UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | 转换类型成功！"), *ClassName);
 				}
-				catch (const std::bad_cast&)
+				else
 				{
 					UE_LOG(LogTemp, Error, TEXT("PoolSubSystem: 转换PooledObject类型时发生错误 生成新Actor | 类名=(%s)"), *ClassName);
 					//生成新Actor
