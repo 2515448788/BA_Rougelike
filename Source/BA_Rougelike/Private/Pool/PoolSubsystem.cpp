@@ -25,7 +25,7 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		//1-修改位置
 		float RandomX = FMath::FRandRange(-500.0f, 500.0f);
 		float RandomY = FMath::FRandRange(-500.0f, 500.0f);
-		PooledActor->SetActorLocation(FVector(RandomX, RandomY, -1000.0f));
+		PooledActor->SetActorLocation(FVector(RandomX, RandomY, -10000.0f));
 		//2-隐藏
 		PooledActor->SetActorHiddenInGame(true);
 		//3-清除Owner
