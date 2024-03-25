@@ -56,6 +56,7 @@ public:
 	void ReturnToPool(AActor* PooledActor);
 
 	//对象池Map  每个类有自己的对象池物体列表
+	UPROPERTY() //反射标记别忘了
 	TMap<UClass*, FPoolArray> ObjectPools;
 };
 
@@ -64,8 +65,8 @@ public:
 template <typename T>
 T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location, FRotator Rotation, AActor* Owner)
 {
-	//需要返回的对象
-	T* PooledActor = nullptr;
+	//需要返回的对象---UE5新的指针初始化
+	TObjectPtr<T> PooledActor = nullptr;
 	// 设置Actor生成参数
 	FActorSpawnParameters SpawnParams;
 	// 设置碰撞处理方式为尝试调整位置但始终生成
@@ -75,12 +76,14 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 	{
 		FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
 		FString ClassName = PoolClass->GetName(); // 获取Actor类名称
+		bool needProcess = true;
 		//对象池列表是否为空
 		if (ObjectPool.IsEmpty())
 		{
 			//对象池列表为空，全新生成Actor
 			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 对象池列表为空，全新生成  类名=(%s)"), *ClassName);
 			PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
+			needProcess = false;
 		}
 		else
 		{
@@ -88,39 +91,35 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 			       ObjectPool.PoolActors.Num());
 			//检查对象池栈顶元素是否有效
 			AActor* PooledObject = ObjectPool.Pop();
-			if (PooledObject == nullptr)
-			{
-				//栈顶元素无效生成新Actor
-				UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 栈顶元素无效，重新生成 | 类名=(%s)"), *ClassName);
-				PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
-			}
-			else
+			if (IsValid(PooledObject))
 			{
 				UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | Pop后对象池长度(%d)"), *ClassName,
 				       ObjectPool.PoolActors.Num());
 				PooledActor = Cast<T>(PooledObject);
-				if (PooledActor)
-				{
-					UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | 转换类型成功！"), *ClassName);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("PoolSubSystem: 转换PooledObject类型时发生错误 生成新Actor | 类名=(%s)"), *ClassName);
-					//生成新Actor
-					PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
-				}
+			}
+			else
+			{
+				//栈顶元素无效生成新Actor
+				UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 栈顶元素无效，重新生成 | 类名=(%s)"), *ClassName);
+				PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
+				needProcess = false;
 			}
 		}
 		//有效性判断
-		if (PooledActor != nullptr)
+		if (IsValid(PooledActor))
 		{
-			//*****从对象池生成时需要执行的通用操作*****//
-			//1-设置位置和旋转
-			PooledActor->SetActorLocationAndRotation(Location, Rotation);
-			//2-显示出来
-			PooledActor->SetActorHiddenInGame(false);
+			if (needProcess)
+			{
+				//*****从对象池生成时需要执行的通用操作*****//
+				//开启碰撞
+				PooledActor->SetActorEnableCollision(true);
+				//设置位置和旋转
+				PooledActor->SetActorLocationAndRotation(Location, Rotation);
+				//显示出来
+				PooledActor->SetActorHiddenInGame(false);
+			}
 			//设置拥有者
-			if (Owner != nullptr)
+			if (IsValid(Owner))
 			{
 				PooledActor->SetOwner(Owner);
 			}

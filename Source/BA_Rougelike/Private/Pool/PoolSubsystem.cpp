@@ -22,13 +22,15 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		//执行接口事件-返回时
 		IPoolableInterface::Execute_OnReturnToPool(PooledActor);
 		//*****返回对象池时需要执行的通用操作*****//
-		//1-修改位置
+		//关闭碰撞
+		PooledActor->SetActorEnableCollision(false);
+		//修改位置
 		float RandomX = FMath::FRandRange(-500.0f, 500.0f);
 		float RandomY = FMath::FRandRange(-500.0f, 500.0f);
 		PooledActor->SetActorLocation(FVector(RandomX, RandomY, -10000.0f));
-		//2-隐藏
+		//隐藏
 		PooledActor->SetActorHiddenInGame(true);
-		//3-清除Owner
+		//清除Owner
 		PooledActor->SetOwner(nullptr);
 		//获取对应的对象池列表
 		FPoolArray* ObjectPool = ObjectPools.Find(PoolableClass);
