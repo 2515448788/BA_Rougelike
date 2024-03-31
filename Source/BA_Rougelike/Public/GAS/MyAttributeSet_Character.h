@@ -85,10 +85,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData DamageMultiplier;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, DamageMultiplier);
-	//攻击间隔
+	//攻击速度倍率
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	FGameplayAttributeData AttackInterval;
-	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, AttackInterval);
+	FGameplayAttributeData AttackSpeedMultiplier;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, AttackSpeedMultiplier);
 	//暴击率
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData CriticalChance;
@@ -109,14 +109,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData SkillCooldownReduction;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, SkillCooldownReduction);
-	//当前弹匣容量
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	FGameplayAttributeData MagazineSize;
-	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MagazineSize);
-	//最大弹匣容量
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	FGameplayAttributeData MaxMagazineSize;
-	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MaxMagazineSize);
 	//移动速度
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData MoveSpeed;

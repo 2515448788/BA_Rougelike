@@ -20,6 +20,8 @@ void AMyCharacterBase::BeginPlay()
 	//绑定属性变化回调 内部广播委托
 	if (EnhancedInputAbilitySystem != nullptr)
 	{
+		//初始化ASC
+		EnhancedInputAbilitySystem->InitAbilityActorInfo(this, this);
 		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---血量
 		FOnGameplayAttributeValueChange& HealthChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetHealthAttribute());
@@ -85,9 +87,9 @@ void AMyCharacterBase::BeginPlay()
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetDamageMultiplierAttribute());
 		DamageMultiplierChangeDelegate.AddUObject(this, &AMyCharacterBase::OnDamageMultiplierChanged);
 		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---攻击间隔
-		FOnGameplayAttributeValueChange& AttackIntervalChangeDelegate = EnhancedInputAbilitySystem->
-			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetAttackIntervalAttribute());
-		AttackIntervalChangeDelegate.AddUObject(this, &AMyCharacterBase::OnAttackIntervalChanged);
+		FOnGameplayAttributeValueChange& AttackSpeedMultiplierChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetAttackSpeedMultiplierAttribute());
+		AttackSpeedMultiplierChangeDelegate.AddUObject(this, &AMyCharacterBase::OnAttackSpeedMultiplierChanged);
 		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---暴击率
 		FOnGameplayAttributeValueChange& CriticalChanceChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetCriticalChanceAttribute());
@@ -108,14 +110,6 @@ void AMyCharacterBase::BeginPlay()
 		FOnGameplayAttributeValueChange& SkillCooldownReductionChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetSkillCooldownReductionAttribute());
 		SkillCooldownReductionChangeDelegate.AddUObject(this, &AMyCharacterBase::OnSkillCooldownReductionChanged);
-		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---当前弹匣容量
-		FOnGameplayAttributeValueChange& MagazineSizeChangeDelegate = EnhancedInputAbilitySystem->
-			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMagazineSizeAttribute());
-		MagazineSizeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMagazineSizeChanged);
-		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---最大弹匣容量
-		FOnGameplayAttributeValueChange& MaxMagazineSizeChangeDelegate = EnhancedInputAbilitySystem->
-			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMaxMagazineSizeAttribute());
-		MaxMagazineSizeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMaxMagazineSizeChanged);
 		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---移动速度
 		FOnGameplayAttributeValueChange& MoveSpeedChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMoveSpeedAttribute());
@@ -132,149 +126,229 @@ UAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
 //回调定义 属性变化时广播对应委托 --- 血量
 void AMyCharacterBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	HealthChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	HealthChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 最大血量
 void AMyCharacterBase::OnMaxHealthChanged(const FOnAttributeChangeData& Data)
 {
-	MaxHealthChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	MaxHealthChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 血量再生
 void AMyCharacterBase::OnHealthRegenerationChanged(const FOnAttributeChangeData& Data)
 {
-	HealthRegenerationChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	HealthRegenerationChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 等级
 void AMyCharacterBase::OnLevelChanged(const FOnAttributeChangeData& Data)
 {
-	LevelChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	LevelChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 经验值
 void AMyCharacterBase::OnEXPChanged(const FOnAttributeChangeData& Data)
 {
-	EXPChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	EXPChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 最大经验值
 void AMyCharacterBase::OnMaxEXPChanged(const FOnAttributeChangeData& Data)
 {
-	MaxEXPChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	MaxEXPChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 拾取半径
 void AMyCharacterBase::OnPickupRadiusChanged(const FOnAttributeChangeData& Data)
 {
-	PickupRadiusChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	PickupRadiusChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 经验倍率
 void AMyCharacterBase::OnEXPMultiplierChanged(const FOnAttributeChangeData& Data)
 {
-	EXPMultiplierChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	EXPMultiplierChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 护盾值
 void AMyCharacterBase::OnEnergyShieldChanged(const FOnAttributeChangeData& Data)
 {
-	EnergyShieldChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	EnergyShieldChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 最大护盾值
 void AMyCharacterBase::OnMaxEnergyShieldChanged(const FOnAttributeChangeData& Data)
 {
-	MaxEnergyShieldChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	MaxEnergyShieldChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 护盾值再生
 void AMyCharacterBase::OnEnergyShieldRegenerationChanged(const FOnAttributeChangeData& Data)
 {
-	EnergyShieldRegenerationChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	EnergyShieldRegenerationChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 减伤率
 void AMyCharacterBase::OnDamageReductionRateChanged(const FOnAttributeChangeData& Data)
 {
-	DamageReductionRateChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	DamageReductionRateChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 闪避几率
 void AMyCharacterBase::OnDodgeChanceChanged(const FOnAttributeChangeData& Data)
 {
-	DodgeChanceChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	DodgeChanceChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 最大闪避几率
 void AMyCharacterBase::OnMaxDodgeChanceChanged(const FOnAttributeChangeData& Data)
 {
-	MaxDodgeChanceChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	MaxDodgeChanceChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 攻击力
 void AMyCharacterBase::OnAttackDamageChanged(const FOnAttributeChangeData& Data)
 {
-	AttackDamageChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	AttackDamageChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 伤害倍率
 void AMyCharacterBase::OnDamageMultiplierChanged(const FOnAttributeChangeData& Data)
 {
-	DamageMultiplierChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	DamageMultiplierChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 攻击间隔
-void AMyCharacterBase::OnAttackIntervalChanged(const FOnAttributeChangeData& Data)
+void AMyCharacterBase::OnAttackSpeedMultiplierChanged(const FOnAttributeChangeData& Data)
 {
-	AttackIntervalChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	AttackSpeedMultiplierChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 暴击率
 void AMyCharacterBase::OnCriticalChanceChanged(const FOnAttributeChangeData& Data)
 {
-	CriticalChanceChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	CriticalChanceChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 暴击伤害倍率
 void AMyCharacterBase::OnCriticalMultiplierChanged(const FOnAttributeChangeData& Data)
 {
-	CriticalMultiplierChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	CriticalMultiplierChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 穿透等级
 void AMyCharacterBase::OnPenetrationLevelChanged(const FOnAttributeChangeData& Data)
 {
-	PenetrationLevelChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	PenetrationLevelChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 抛射物反弹次数
 void AMyCharacterBase::OnProjectileBounceCountChanged(const FOnAttributeChangeData& Data)
 {
-	ProjectileBounceCountChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	ProjectileBounceCountChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 技能冷却缩减
 void AMyCharacterBase::OnSkillCooldownReductionChanged(const FOnAttributeChangeData& Data)
 {
-	SkillCooldownReductionChangedEvent.Broadcast(Data.NewValue);
-}
-
-//回调定义 属性变化时广播对应委托 --- 当前弹匣容量
-void AMyCharacterBase::OnMagazineSizeChanged(const FOnAttributeChangeData& Data)
-{
-	MagazineSizeChangedEvent.Broadcast(Data.NewValue);
-}
-
-//回调定义 属性变化时广播对应委托 --- 最大弹匣容量
-void AMyCharacterBase::OnMaxMagazineSizeChanged(const FOnAttributeChangeData& Data)
-{
-	MaxMagazineSizeChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	SkillCooldownReductionChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }
 
 //回调定义 属性变化时广播对应委托 --- 移动速度
 void AMyCharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& Data)
 {
-	MoveSpeedChangedEvent.Broadcast(Data.NewValue);
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	MoveSpeedChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }

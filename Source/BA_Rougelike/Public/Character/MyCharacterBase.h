@@ -27,7 +27,7 @@ public:
 	//属性改变回调---血量
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---血量
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FOnHealthChanged HealthChangedEvent;
@@ -35,7 +35,7 @@ public:
 	//属性改变回调---最大血量
 	void OnMaxHealthChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---最大血量
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMaxHealthChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FOnMaxHealthChanged MaxHealthChangedEvent;
@@ -43,7 +43,7 @@ public:
 	//属性改变回调---血量再生
 	void OnHealthRegenerationChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---血量再生
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthRegenerationChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthRegenerationChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FOnHealthRegenerationChanged HealthRegenerationChangedEvent;
@@ -51,7 +51,7 @@ public:
 	//属性改变回调---等级
 	void OnLevelChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---等级
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLevelChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLevelChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FLevelChanged LevelChangedEvent;
@@ -59,7 +59,7 @@ public:
 	//属性改变回调---经验值
 	void OnEXPChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---经验值
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEXPChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEXPChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FEXPChanged EXPChangedEvent;
@@ -67,7 +67,7 @@ public:
 	//属性改变回调---最大经验值
 	void OnMaxEXPChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---最大经验值
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMaxEXPChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMaxEXPChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMaxEXPChanged MaxEXPChangedEvent;
@@ -75,7 +75,7 @@ public:
 	//属性改变回调---拾取半径
 	void OnPickupRadiusChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---拾取半径
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPickupRadiusChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPickupRadiusChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FPickupRadiusChanged PickupRadiusChangedEvent;
@@ -83,7 +83,7 @@ public:
 	//属性改变回调---经验倍率
 	void OnEXPMultiplierChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---经验倍率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEXPMultiplierChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEXPMultiplierChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FEXPMultiplierChanged EXPMultiplierChangedEvent;
@@ -91,7 +91,7 @@ public:
 	//属性改变回调---护盾值
 	void OnEnergyShieldChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---护盾值
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnergyShieldChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEnergyShieldChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FEnergyShieldChanged EnergyShieldChangedEvent;
@@ -99,7 +99,7 @@ public:
 	//属性改变回调---最大护盾值
 	void OnMaxEnergyShieldChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---最大护盾值
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMaxEnergyShieldChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMaxEnergyShieldChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMaxEnergyShieldChanged MaxEnergyShieldChangedEvent;
@@ -107,7 +107,7 @@ public:
 	//属性改变回调---护盾值再生
 	void OnEnergyShieldRegenerationChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---护盾值再生
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnergyShieldRegenerationChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEnergyShieldRegenerationChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FEnergyShieldRegenerationChanged EnergyShieldRegenerationChangedEvent;
@@ -115,7 +115,7 @@ public:
 	//属性改变回调---减伤率
 	void OnDamageReductionRateChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---减伤率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDamageReductionRateChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDamageReductionRateChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FDamageReductionRateChanged DamageReductionRateChangedEvent;
@@ -123,7 +123,7 @@ public:
 	//属性改变回调---闪避几率
 	void OnDodgeChanceChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---闪避几率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDodgeChanceChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDodgeChanceChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FDodgeChanceChanged DodgeChanceChangedEvent;
@@ -131,7 +131,7 @@ public:
 	//属性改变回调---最大闪避几率
 	void OnMaxDodgeChanceChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---最大闪避几率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMaxDodgeChanceChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMaxDodgeChanceChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMaxDodgeChanceChanged MaxDodgeChanceChangedEvent;
@@ -139,7 +139,7 @@ public:
 	//属性改变回调---攻击力
 	void OnAttackDamageChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---攻击力
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDamageChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttackDamageChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FAttackDamageChanged AttackDamageChangedEvent;
@@ -147,23 +147,23 @@ public:
 	//属性改变回调---伤害倍率
 	void OnDamageMultiplierChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---伤害倍率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDamageMultiplierChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDamageMultiplierChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FDamageMultiplierChanged DamageMultiplierChangedEvent;
 
-	//属性改变回调---攻击间隔
-	void OnAttackIntervalChanged(const FOnAttributeChangeData& Data);
+	//属性改变回调---攻击速率倍率
+	void OnAttackSpeedMultiplierChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---攻击间隔
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackIntervalChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttackSpeedMultiplierChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
-	FAttackIntervalChanged AttackIntervalChangedEvent;
+	FAttackSpeedMultiplierChanged AttackSpeedMultiplierChangedEvent;
 
 	//属性改变回调---暴击率
 	void OnCriticalChanceChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---暴击率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCriticalChanceChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCriticalChanceChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FCriticalChanceChanged CriticalChanceChangedEvent;
@@ -171,7 +171,7 @@ public:
 	//属性改变回调---暴击伤害倍率
 	void OnCriticalMultiplierChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---暴击伤害倍率
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCriticalMultiplierChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCriticalMultiplierChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FCriticalMultiplierChanged CriticalMultiplierChangedEvent;
@@ -179,7 +179,7 @@ public:
 	//属性改变回调---穿透等级
 	void OnPenetrationLevelChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---穿透等级
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPenetrationLevelChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPenetrationLevelChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FPenetrationLevelChanged PenetrationLevelChangedEvent;
@@ -187,7 +187,7 @@ public:
 	//属性改变回调---抛射物反弹次数
 	void OnProjectileBounceCountChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---抛射物反弹次数
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FProjectileBounceCountChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FProjectileBounceCountChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FProjectileBounceCountChanged ProjectileBounceCountChangedEvent;
@@ -195,31 +195,15 @@ public:
 	//属性改变回调---技能冷却缩减
 	void OnSkillCooldownReductionChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---技能冷却缩减
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSkillCooldownReductionChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSkillCooldownReductionChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FSkillCooldownReductionChanged SkillCooldownReductionChangedEvent;
 
-	//属性改变回调---当前弹匣容量
-	void OnMagazineSizeChanged(const FOnAttributeChangeData& Data);
-	//委托-属性变化时进行广播---当前弹匣容量
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMagazineSizeChanged, float, NewValue);
-
-	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
-	FMagazineSizeChanged MagazineSizeChangedEvent;
-
-	//属性改变回调---最大弹匣容量
-	void OnMaxMagazineSizeChanged(const FOnAttributeChangeData& Data);
-	//委托-属性变化时进行广播---最大弹匣容量
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMaxMagazineSizeChanged, float, NewValue);
-
-	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
-	FMaxMagazineSizeChanged MaxMagazineSizeChangedEvent;
-
 	//属性改变回调---移动速度
 	void OnMoveSpeedChanged(const FOnAttributeChangeData& Data);
 	//委托-属性变化时进行广播---移动速度
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMoveSpeedChanged, float, NewValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMoveSpeedChanged, float, OldValue, float, NewValue);
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMoveSpeedChanged MoveSpeedChangedEvent;

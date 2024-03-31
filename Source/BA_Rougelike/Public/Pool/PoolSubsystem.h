@@ -111,6 +111,8 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 			if (needProcess)
 			{
 				//*****从对象池生成时需要执行的通用操作*****//
+				//开启Tick
+				PooledActor->SetActorTickEnabled(true);
 				//开启碰撞
 				PooledActor->SetActorEnableCollision(true);
 				//设置位置和旋转

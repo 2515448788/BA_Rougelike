@@ -22,6 +22,8 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		//执行接口事件-返回时
 		IPoolableInterface::Execute_OnReturnToPool(PooledActor);
 		//*****返回对象池时需要执行的通用操作*****//
+		//关闭Tick
+		PooledActor->SetActorTickEnabled(false);
 		//关闭碰撞
 		PooledActor->SetActorEnableCollision(false);
 		//修改位置
