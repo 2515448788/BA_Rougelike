@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "K2Node_SpawnActorFromClass.h"
 #include "PoolableInterface.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "PoolSubsystem.generated.h"
@@ -71,17 +72,23 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 	FActorSpawnParameters SpawnParams;
 	// 设置碰撞处理方式为尝试调整位置但始终生成
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	//是否需要对生成的Actor进行后处理
+	bool needProcess = true;
+	//是否继承了对象池接口
+	bool hasPoolInterface = false;
+	// 获取Actor类名称
+	FString ClassName = PoolClass->GetName();
 	//传入的类是否实现了对象池所需的接口
 	if (PoolClass.Get()->ImplementsInterface(UPoolableInterface::StaticClass()))
 	{
+		hasPoolInterface = true;
+		//对应类别的对象池数组
 		FPoolArray& ObjectPool = ObjectPools.FindOrAdd(PoolClass);
-		FString ClassName = PoolClass->GetName(); // 获取Actor类名称
-		bool needProcess = true;
 		//对象池列表是否为空
 		if (ObjectPool.IsEmpty())
 		{
 			//对象池列表为空，全新生成Actor
-			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 对象池列表为空，全新生成  类名=(%s)"), *ClassName);
+			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 对象池列表为空，重新生成  类名=(%s)"), *ClassName);
 			PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
 			needProcess = false;
 		}
@@ -105,26 +112,36 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 				needProcess = false;
 			}
 		}
-		//有效性判断
-		if (IsValid(PooledActor))
+	}
+	//未实现对象池接口 重新生成
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 未实现对象池接口，重新生成  类名=(%s)"), *ClassName);
+		PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
+		needProcess = false;
+	}
+	//后处理
+	if (IsValid(PooledActor))
+	{
+		//设置拥有者
+		if (IsValid(Owner))
 		{
-			if (needProcess)
-			{
-				//*****从对象池生成时需要执行的通用操作*****//
-				//开启Tick
-				PooledActor->SetActorTickEnabled(true);
-				//开启碰撞
-				PooledActor->SetActorEnableCollision(true);
-				//设置位置和旋转
-				PooledActor->SetActorLocationAndRotation(Location, Rotation);
-				//显示出来
-				PooledActor->SetActorHiddenInGame(false);
-			}
-			//设置拥有者
-			if (IsValid(Owner))
-			{
-				PooledActor->SetOwner(Owner);
-			}
+			PooledActor->SetOwner(Owner);
+		}
+		if (needProcess)
+		{
+			//*****从对象池生成时需要执行的通用操作*****//
+			//开启Tick
+			PooledActor->SetActorTickEnabled(true);
+			//设置位置和旋转
+			PooledActor->SetActorLocationAndRotation(Location, Rotation);
+			//显示出来
+			PooledActor->SetActorHiddenInGame(false);
+			//开启碰撞
+			PooledActor->SetActorEnableCollision(true);
+		}
+		if (hasPoolInterface)
+		{
 			//执行接口事件-生成时
 			IPoolableInterface::Execute_OnSpawnFromPool(PooledActor);
 		}

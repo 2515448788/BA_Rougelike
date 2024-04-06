@@ -207,4 +207,20 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
 	FMoveSpeedChanged MoveSpeedChangedEvent;
+
+	//属性改变回调---子弹初速
+	void OnProjectileInitSpeedChanged(const FOnAttributeChangeData& Data);
+	//委托-属性变化时进行广播---子弹初速
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FProjectileInitSpeedChanged, float, OldValue, float, NewValue);
+
+	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
+	FProjectileInitSpeedChanged ProjectileInitSpeedChangedEvent;
+
+	//属性改变回调---攻击范围
+	void OnAttackRangeChanged(const FOnAttributeChangeData& Data);
+	//委托-属性变化时进行广播---攻击范围
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttackRangeChanged, float, OldValue, float, NewValue);
+
+	UPROPERTY(BlueprintAssignable, Category = "EnhancedAbilitySystem")
+	FAttackRangeChanged AttackRangeChangedEvent;
 };

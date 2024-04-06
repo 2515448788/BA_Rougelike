@@ -114,6 +114,14 @@ void AMyCharacterBase::BeginPlay()
 		FOnGameplayAttributeValueChange& MoveSpeedChangeDelegate = EnhancedInputAbilitySystem->
 			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetMoveSpeedAttribute());
 		MoveSpeedChangeDelegate.AddUObject(this, &AMyCharacterBase::OnMoveSpeedChanged);
+		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---子弹初速
+		FOnGameplayAttributeValueChange& ProjectileInitSpeedChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetProjectileInitSpeedAttribute());
+		ProjectileInitSpeedChangeDelegate.AddUObject(this, &AMyCharacterBase::OnProjectileInitSpeedChanged);
+		//获取ASC组件里对应属性变化的委托并绑定自己定义的回调---子弹初速
+		FOnGameplayAttributeValueChange& AttackRangeChangeDelegate = EnhancedInputAbilitySystem->
+			GetGameplayAttributeValueChangeDelegate(UMyAttributeSet_Character::GetAttackRangeAttribute());
+		AttackRangeChangeDelegate.AddUObject(this, &AMyCharacterBase::OnAttackRangeChanged);
 	}
 }
 
@@ -351,4 +359,24 @@ void AMyCharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& Data)
 		return;
 	}
 	MoveSpeedChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
+}
+
+//回调定义 属性变化时广播对应委托 --- 子弹初速
+void AMyCharacterBase::OnProjectileInitSpeedChanged(const FOnAttributeChangeData& Data)
+{
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	ProjectileInitSpeedChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
+}
+
+//回调定义 属性变化时广播对应委托 --- 子弹初速
+void AMyCharacterBase::OnAttackRangeChanged(const FOnAttributeChangeData& Data)
+{
+	if (Data.OldValue == Data.NewValue)
+	{
+		return;
+	}
+	AttackRangeChangedEvent.Broadcast(Data.OldValue, Data.NewValue);
 }

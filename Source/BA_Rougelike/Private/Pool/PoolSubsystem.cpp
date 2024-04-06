@@ -24,12 +24,12 @@ void UPoolSubsystem::ReturnToPool(AActor* PooledActor)
 		//*****返回对象池时需要执行的通用操作*****//
 		//关闭Tick
 		PooledActor->SetActorTickEnabled(false);
-		//关闭碰撞
-		PooledActor->SetActorEnableCollision(false);
 		//修改位置
 		float RandomX = FMath::FRandRange(-500.0f, 500.0f);
 		float RandomY = FMath::FRandRange(-500.0f, 500.0f);
 		PooledActor->SetActorLocation(FVector(RandomX, RandomY, -10000.0f));
+		//关闭碰撞
+		PooledActor->SetActorEnableCollision(false);
 		//隐藏
 		PooledActor->SetActorHiddenInGame(true);
 		//清除Owner

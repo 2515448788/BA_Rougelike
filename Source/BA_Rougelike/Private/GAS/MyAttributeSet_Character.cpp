@@ -27,6 +27,16 @@ void UMyAttributeSet_Character::PreAttributeChange(const FGameplayAttribute& Att
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxDodgeChance());
 	}
+	//钳制 子弹初速 属性的CurrentValue
+	if (Attribute == GetProjectileInitSpeedAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetProjectileInitSpeed());
+	}
+	//钳制 攻击范围 属性的CurrentValue
+	if (Attribute == GetAttackRangeAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetAttackRange());
+	}
 }
 
 //AttributeSet自带回调---在Attribute的 BaseValue 被改变时调用

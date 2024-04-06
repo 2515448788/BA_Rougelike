@@ -113,6 +113,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FGameplayAttributeData MoveSpeed;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, MoveSpeed);
+	//子弹初速
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FGameplayAttributeData ProjectileInitSpeed;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, ProjectileInitSpeed);
+	//攻击范围
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FGameplayAttributeData AttackRange;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet_Character, AttackRange);
 
 	//AttributeSet自带回调---在Attribute的Current Value被改变时调用
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
