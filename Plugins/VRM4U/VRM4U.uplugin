@@ -34,6 +34,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "VRM4UCaptureEditor",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "PreDefault"
+		},
+		{
 			"Name": "VRM4URender",
 			"Type": "Runtime",
 			"LoadingPhase": "PostConfigInit"
@@ -65,6 +70,10 @@
 		},
 		{
 			"Name": "IKRig",
+			"Enabled": true
+		},
+		{
+			"Name": "OSC",
 			"Enabled": true
 		}
 	]

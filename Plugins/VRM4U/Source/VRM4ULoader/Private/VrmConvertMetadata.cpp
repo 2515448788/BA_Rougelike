@@ -235,7 +235,7 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 					int offset = 0;
 					for (int meshNo = 0; meshNo < tmpMeshID; ++meshNo) {
 						if (jsonData.doc["meshes"].GetArray()[meshNo].HasMember("primitives") == false) continue;
-						offset += jsonData.doc["meshes"].GetArray()[meshNo]["primitives"].Size() - 1;
+						//offset += jsonData.doc["meshes"].GetArray()[meshNo]["primitives"].Size() - 1;
 					}
 					targetShape.meshID = tmpMeshID + offset;
 				}
@@ -707,7 +707,21 @@ bool VRMConverter::ConvertVrmMeta(UVrmAssetListObject* vrmAssetList, const aiSce
 	return true;
 }
 
-bool VRMConverter::ConvertVrmMetaRenamed(UVrmAssetListObject* vrmAssetList, const aiScene* mScenePtr, const uint8* pData, size_t dataSize) {
+bool VRMConverter::ConvertVrmMetaPost(UVrmAssetListObject* vrmAssetList, const aiScene* mScenePtr, const uint8* pData, size_t dataSize) {
+
+	//sort
+	if (vrmAssetList && vrmAssetList->VrmMetaObject){
+		auto& t = vrmAssetList->VrmMetaObject->humanoidBoneTable;
+		auto& rk = VRMGetRefSkeleton(vrmAssetList->SkeletalMesh);
+		for (int i = 0; i < t.Num()-1; ++i) {
+
+			t.ValueSort([&rk](const FString A, const FString B) {
+				return rk.FindBoneIndex(*A) < rk.FindBoneIndex(*B);
+				}
+			);
+		}
+	}
+
 	if (VRMConverter::Options::Get().IsGenerateHumanoidRenamedMesh()) {
 		UPackage* package = GetTransientPackage();
 

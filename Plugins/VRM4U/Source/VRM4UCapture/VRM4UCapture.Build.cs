@@ -12,19 +12,13 @@ public class VRM4UCapture : ModuleRules
 			new string[] {
 				"Core",
 				"CoreUObject",
-                "InputCore",
-                "ApplicationCore",
                 "Engine",
-				"Json",
-                "Slate",
-                "SlateCore",
-                "RenderCore",
-                "RHI",
-                "Renderer",
                 "Networking",
                 "Sockets",
+				"OSC",
+				"AnimGraphRuntime",
 
-                "VRM4U",
+				"VRM4U",
             });
 
 		PrivateIncludePathModuleNames.AddRange(

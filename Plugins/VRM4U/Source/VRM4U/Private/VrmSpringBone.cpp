@@ -1,6 +1,5 @@
 ﻿#include "VrmSpringBone.h"
 
-
 VrmSpringBone::VrmSpringBone()
 {
 }
@@ -522,9 +521,14 @@ namespace VRMSpringBone {
 namespace VRM1Spring {
 
 	void VRM1SpringManager::reset() {
+		for (auto &j : JointStateMap) {
+			j.Value.currentTail = j.Value.prevTail = j.Value.initialTail;
+		}
 	}
 
 	void VRM1SpringManager::init(const UVrmMetaObject* meta, FComponentSpacePoseContext& Output) {
+
+		if (meta == nullptr) return;
 
 		const FTransform ComponentTransform = Output.AnimInstanceProxy->GetComponentTransform();
 		FTransform ComponentToLocal = ComponentTransform.Inverse();
@@ -549,7 +553,7 @@ namespace VRM1Spring {
 				}
 				if (RefSkeletonTransform.IsValidIndex(j2.boneNo) == false) {
 					continue;
-			}
+				}
 
 				state.initialLocalMatrix = RefSkeletonTransform[j1.boneNo];
 				state.initialLocalRotation = RefSkeletonTransform[j1.boneNo].GetRotation();
@@ -565,11 +569,12 @@ namespace VRM1Spring {
 					FCompactPoseBoneIndex u(j2.boneNo);
 					auto t = Output.Pose.GetComponentSpaceTransform(u);
 
-					state.prevTail = ComponentToLocal.InverseTransformPosition(t.GetLocation());
-					state.currentTail = ComponentToLocal.InverseTransformPosition(t.GetLocation());
+					state.prevTail = 
+						state.currentTail =
+						state.initialTail = ComponentToLocal.InverseTransformPosition(t.GetLocation());
 				}
 				{
-					FCompactPoseBoneIndex u(j2.boneNo);
+					FCompactPoseBoneIndex u(j1.boneNo);
 					auto t = Output.Pose.GetComponentSpaceTransform(u);
 
 					state.resultQuat = t.GetRotation();
@@ -582,6 +587,9 @@ namespace VRM1Spring {
 	void VRM1SpringManager::update(const FAnimNode_VrmSpringBone* animNode, float DeltaTime, FComponentSpacePoseContext& Output, TArray<FBoneTransform>& OutBoneTransforms) {
 
 		if (skeletalMesh == nullptr) {
+			return;
+		}
+		if (FMath::IsNearlyZero(DeltaTime)) {
 			return;
 		}
 
@@ -608,7 +616,10 @@ namespace VRM1Spring {
 				auto& j2 = s.joints[jointNo+1];
 
 				auto* state = JointStateMap.Find(j1.boneNo);
-				if (state == nullptr) continue;
+				if (state == nullptr) {
+					init(vrmMetaObject, Output);
+					continue;
+				}
 
 				//int myParentBoneIndex = RefSkeleton.GetParentIndex(j.boneNo);
 
@@ -659,9 +670,15 @@ namespace VRM1Spring {
 				const FVector prevTail = ComponentToLocal.TransformPosition(state->prevTail);
 
 				const FVector inertia = (currentTail - prevTail) * (1.0f - j1.dragForce);
-				const FVector stiffness = currentTransform.GetRotation() * state->boneAxis * 1.f * DeltaTime * 100;
+				const FVector stiffness = currentTransform.GetRotation() * state->boneAxis * 1.f * DeltaTime
+					* 100.f * j1.stiffness * animNode->stiffnessScale + animNode->stiffnessAdd;
 
-				FVector nextTailTarget = currentTail + inertia + stiffness;
+				FVector ue4grav(-j1.gravityDir.X, j1.gravityDir.Z, j1.gravityDir.Y);
+				FVector external = ComponentToLocal.TransformVector(ue4grav) * (j1.gravityPower * DeltaTime) * animNode->gravityScale
+					+ ComponentToLocal.TransformVector(animNode->gravityAdd) * DeltaTime;
+
+
+				FVector nextTailTarget = currentTail + inertia + stiffness + external;
 				//FVector nextTailTarget = currentTail + stiffness * 10;
 
 				// 長さをboneLengthに強制
@@ -705,17 +722,17 @@ namespace VRM1Spring {
 						auto offs = collider.offset;
 						offs.Set(offs.X, -offs.Z, offs.Y);
 						offs *= 100;
-						offs = collisionBoneTrans.TransformVector(offs);
+						//offs = collisionBoneTrans.TransformVector(offs);
 
 						auto tail = collider.tail;
 						tail.Set(tail.X, -tail.Z, tail.Y);
 						tail *= 100;
-						tail = collisionBoneTrans.TransformVector(tail);
+						//tail = collisionBoneTrans.TransformVector(tail);
 
 						float r = (j1.hitRadius + collider.radius) * 100.f;
 
 						if (collider.shapeType == TEXT("sphere")) {
-							FVector v = collisionBoneTrans.GetLocation() + offs;
+							FVector v = collisionBoneTrans.TransformPosition(offs);
 
 							if ((v - nextTailPosition).SizeSquared() > r * r) {
 								continue;
@@ -730,12 +747,12 @@ namespace VRM1Spring {
 						else {
 	
 							FTransform t1 = collisionBoneTrans;
-							t1.AddToTranslation(offs);
+							auto v1 = t1.TransformPosition(offs);
 
 							FTransform t2 = collisionBoneTrans;
-							t2.AddToTranslation(tail);
+							auto v2 = t2.TransformPosition(tail);
 
-							FVector nearestPoint = FMath::ClosestPointOnSegment(nextTailPosition, t1.GetLocation(), t2.GetLocation());
+							FVector nearestPoint = FMath::ClosestPointOnSegment(nextTailPosition, v1, v2);
 
 							float dif = (nearestPoint - nextTailPosition).SizeSquared();
 							if (dif > r * r) {
