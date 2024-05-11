@@ -87,26 +87,22 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 		if (ObjectPool.IsEmpty())
 		{
 			//对象池列表为空，全新生成Actor
-			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 对象池列表为空，重新生成  类名=(%s)"), *ClassName);
+			UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 指定类对象池列表为空，重新生成  类名=(%s)"), *ClassName);
 			PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
 			needProcess = false;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 对象池列表有效，类名=(%s) | Pop前对象池长度(%d)"), *ClassName,
-			       ObjectPool.PoolActors.Num());
 			//检查对象池栈顶元素是否有效
 			AActor* PooledObject = ObjectPool.Pop();
 			if (IsValid(PooledObject))
 			{
-				UE_LOG(LogTemp, Log, TEXT("PoolSubSystem: 栈顶元素有效，类名=(%s) | Pop后对象池长度(%d)"), *ClassName,
-				       ObjectPool.PoolActors.Num());
 				PooledActor = Cast<T>(PooledObject);
 			}
 			else
 			{
 				//栈顶元素无效生成新Actor
-				UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 栈顶元素无效，重新生成 | 类名=(%s)"), *ClassName);
+				UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 指定类对象池栈顶元素无效，重新生成 | 类名=(%s)"), *ClassName);
 				PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
 				needProcess = false;
 			}
@@ -115,7 +111,7 @@ T* UPoolSubsystem::SpawnFromPool(TSubclassOf<AActor> PoolClass, FVector Location
 	//未实现对象池接口 重新生成
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 未实现对象池接口，重新生成  类名=(%s)"), *ClassName);
+		UE_LOG(LogTemp, Warning, TEXT("PoolSubSystem: 指定类未实现对象池接口，重新生成  类名=(%s)"), *ClassName);
 		PooledActor = GetWorld()->SpawnActor<T>(PoolClass, Location, Rotation, SpawnParams);
 		needProcess = false;
 	}
