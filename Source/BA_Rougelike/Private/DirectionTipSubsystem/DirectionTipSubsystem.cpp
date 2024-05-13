@@ -8,3 +8,9 @@ void UDirectionTipSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	OnInitialize();
 }
+
+void UDirectionTipSubsystem::Tick(float DeltaTime)
+{
+	OnTick(DeltaTime);
+}
+

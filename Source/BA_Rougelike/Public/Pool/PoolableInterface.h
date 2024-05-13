@@ -30,6 +30,4 @@ public:
 	//回调函数-返回对象池时
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable,Category="Poolable")
 	void OnReturnToPool();
-
-	
 };
